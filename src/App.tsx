@@ -1,11 +1,10 @@
-import { Box, OrbitControls } from "@react-three/drei";
+import { OrbitControls } from "@react-three/drei";
 import { useThree } from "@react-three/fiber";
-import { BufferAttribute, BufferGeometry, Color, DoubleSide, Vector3 } from "three";
+import { BufferAttribute, BufferGeometry, Color, DoubleSide } from "three";
 import Face from "./hexaspherejs/face";
 import Hexasphere from "./hexaspherejs/hexasphere";
 import Point from "./hexaspherejs/point";
 import { useMemo } from "react";
-import { fileURLToPath } from "url";
 
 type Tile = {
   centerPoint: Point;
@@ -16,24 +15,24 @@ type Tile = {
 };
 
 export default function App() {
-  var hexasphere = new Hexasphere(30, 25, 1);
-
-  console.log(hexasphere);
+  var hexasphere = new Hexasphere(15, 3, 0.8);
 
   const { scene } = useThree();
   scene.background = new Color("#f1e3bb");
 
-  const triangles = hexasphere.tiles
-    .map((tile) =>
-      tile.faces.map((face) => face.points.map((point) => [point.x, point.y, point.z]))
-    )
-    .flat(3);
+  const triangles = hexasphere.tiles.map((tile) => {
+    return tile.faces.map((face) => {
+      return face.points.map((point) => [point.x, point.y, point.z]);
+    });
+  });
+
+  console.log(triangles);
 
   //tile[face][point]
 
   console.log(triangles);
 
-  let vertices = useMemo(() => new Float32Array(triangles), [triangles]);
+  let vertices = useMemo(() => new Float32Array(triangles.flat(3)), [triangles]);
 
   const hexasphereGeometry = new BufferGeometry();
 
@@ -108,7 +107,7 @@ export default function App() {
     <group>
       <OrbitControls />
       <mesh geometry={geo}>
-        <meshStandardMaterial color="red" />
+        <meshStandardMaterial color="red" side={DoubleSide} />
       </mesh>
       <pointLight position={[10, 5, 10]} />
     </group>
