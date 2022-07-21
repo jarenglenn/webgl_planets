@@ -21,7 +21,7 @@ function vector(p1: Point, p2: Point) {
 // Set Normal.x to (multiply U.y by V.z) minus (multiply U.z by V.y)
 // Set Normal.y to (multiply U.z by V.x) minus (multiply U.x by V.z)
 // Set Normal.z to (multiply U.x by V.y) minus (multiply U.y by V.x)
-function calculateSurfaceNormal(p1: Point, p2: Point, p3: Point) {
+export function calculateSurfaceNormal(p1: Point, p2: Point, p3: Point) {
   const U = vector(p1, p2);
   const V = vector(p1, p3);
 
@@ -34,7 +34,7 @@ function calculateSurfaceNormal(p1: Point, p2: Point, p3: Point) {
   return N;
 }
 
-function pointingAwayFromOrigin(p: Point, v: vector3) {
+export function pointingAwayFromOrigin(p: Point, v: vector3) {
   return p.x * v.x >= 0 && p.y * v.y >= 0 && p.z * v.z >= 0;
 }
 
