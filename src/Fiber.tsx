@@ -1,12 +1,24 @@
 import { useMemo } from "react";
-import { OrbitControls, Stats } from "@react-three/drei";
+import { OrbitControls, PerspectiveCamera } from "@react-three/drei";
 import { BufferGeometry, Float32BufferAttribute } from "three";
 import { mergeBufferGeometries } from "three/examples/jsm/utils/BufferGeometryUtils";
 import Hexasphere from "./hexaspherejs/hexasphere";
-import ThreeConfig from "./ThreeConfig";
+import { HexasphereArgs } from "./App";
 
-export default function Fiber() {
-  var hexasphere = useMemo(() => new Hexasphere(5, 10, 0.99), []);
+interface Props {
+  hexasphereArgs: typeof HexasphereArgs;
+}
+
+export default function Fiber(props: Props) {
+  const hexasphere = useMemo(
+    () =>
+      new Hexasphere(
+        props.hexasphereArgs.radius,
+        props.hexasphereArgs.divisions,
+        props.hexasphereArgs.tileScale
+      ),
+    [props.hexasphereArgs]
+  );
 
   const hexasphereGeometry = useMemo(() => {
     const tileGeometries: BufferGeometry[] = [];
@@ -34,16 +46,13 @@ export default function Fiber() {
       tileGeometries.push(geometry);
     }
 
-    const mergedGeometry = mergeBufferGeometries(tileGeometries);
-    return mergedGeometry;
+    return mergeBufferGeometries(tileGeometries);
   }, [hexasphere]);
 
   return (
     <>
-      <ThreeConfig />
-      <Stats />
-
       <OrbitControls />
+      <PerspectiveCamera position={[0, 0, 50]} makeDefault />
 
       <mesh geometry={hexasphereGeometry}>
         <meshPhysicalMaterial color="#87ceeb" />
