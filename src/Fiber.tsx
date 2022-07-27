@@ -46,7 +46,6 @@ export default function Fiber(props: Props) {
       }
 
       // Inside triangles
-
       // prettier-ignore
       indices.push(
         0, 1, 2,
@@ -54,27 +53,58 @@ export default function Fiber(props: Props) {
         0, 3, 4,
       );
 
-      let outsideIndex = 5;
+      let i = 5; // first index of outside triangle
 
       if (vertices.length > 30) {
         indices.push(0, 4, 5);
-        outsideIndex++;
+        i++;
       }
 
+      // Outside triangles
       // prettier-ignore
       indices.push(
-        outsideIndex, outsideIndex + 1, outsideIndex + 2,
-        outsideIndex, outsideIndex + 2, outsideIndex + 3,
-        outsideIndex, outsideIndex + 3, outsideIndex + 4,
+        i, i + 1, i + 2,
+        i, i + 2, i + 3,
+        i, i + 3, i + 4,
       );
 
       if (vertices.length > 30) {
-        indices.push(outsideIndex, outsideIndex + 4, outsideIndex + 5);
+        indices.push(i, i + 4, i + 5);
+      }
+
+      // Side triangles
+
+      // prettier-ignore
+      indices.push(
+        0, i + 1, i,
+        0, 1, i + 1,
+        1, i + 2, i + 1,
+        1, 2, i + 2,
+        2, i + 3, i + 2,
+        2, 3, i + 3,
+        3, i + 4, i + 3,
+        3, 4, i + 4,
+      );
+
+      if (vertices.length > 30) {
+        // prettier-ignore
+        indices.push(
+          5, 11, 10,
+          5, 6, 11,
+          4, 5, 10,
+          5, 0, 6
+        );
+      } else {
+        // prettier-ignore
+        indices.push(
+          4, 0, i + 4,
+          0, i, i + 4
+        );
       }
 
       geometry.setAttribute("position", new Float32BufferAttribute(vertices, 3, false));
-      geometry.setIndex(indices);
       geometry.computeVertexNormals();
+      geometry.setIndex(indices);
 
       tileGeometries.push(geometry);
     }
@@ -85,13 +115,13 @@ export default function Fiber(props: Props) {
   return (
     <>
       <OrbitControls />
-      <PerspectiveCamera position={[0, 0, 50]} makeDefault />
+      <PerspectiveCamera position={[0, 0, 20]} makeDefault />
 
       <mesh geometry={hexasphereGeometry}>
-        <meshPhysicalMaterial color="#87ceeb" />
+        <meshStandardMaterial color="#87ceeb" />
       </mesh>
 
-      <pointLight position={[100, 50, 10]} intensity={0.5} />
+      <pointLight position={[50, 50, 10]} intensity={0.5} />
       <ambientLight intensity={0.2} />
     </>
   );
