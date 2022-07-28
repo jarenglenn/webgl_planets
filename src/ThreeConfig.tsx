@@ -1,8 +1,15 @@
 import { useThree } from "@react-three/fiber";
-import { Color } from "three";
+import { ACESFilmicToneMapping, Color, sRGBEncoding, PCFSoftShadowMap } from "three";
 
 export default function ThreeConfig() {
-  const { scene } = useThree();
+  const { gl: renderer, scene } = useThree();
+  renderer.toneMapping = ACESFilmicToneMapping;
+  renderer.outputEncoding = sRGBEncoding;
+  renderer.physicallyCorrectLights = true;
+
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = PCFSoftShadowMap;
+
   scene.background = new Color("#FFEECC");
 
   return <></>;

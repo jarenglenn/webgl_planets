@@ -18,6 +18,7 @@ export const HexasphereArgs = {
   radius: 10,
   divisions: 5,
   tileScale: 0.99,
+  maxTileRatio: 1.5,
 };
 
 export default function App() {
@@ -64,6 +65,17 @@ export default function App() {
           value={hexasphereArgs.radius}
           onChange={(event) => {
             handleClick("radius", event.target.valueAsNumber);
+          }}
+        ></input>
+        <p>maxTileRatio: {hexasphereArgs.maxTileRatio}</p>
+        <input
+          type="range"
+          min={1}
+          max={3}
+          step={0.05}
+          value={hexasphereArgs.maxTileRatio}
+          onChange={(event) => {
+            handleClick("maxTileRatio", event.target.valueAsNumber);
           }}
         ></input>
       </HTMLWrapper>

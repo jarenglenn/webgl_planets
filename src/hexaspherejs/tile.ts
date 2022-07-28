@@ -98,7 +98,7 @@ export default class Tile {
     }
   }
 
-  getLatLon = function (this: Tile, radius: number, boundaryNum: number) {
+  getLatLon = function (this: Tile, radius: number, boundaryNum?: number) {
     let point = this.centerPoint;
     if (typeof boundaryNum === "number" && boundaryNum < this.boundary.length) {
       point = this.boundary[boundaryNum];

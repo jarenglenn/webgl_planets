@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { OrbitControls, PerspectiveCamera } from "@react-three/drei";
-import { BufferGeometry, DoubleSide, Float32BufferAttribute } from "three";
+import { BufferGeometry, Color, Float32BufferAttribute } from "three";
 import { mergeBufferGeometries } from "three/examples/jsm/utils/BufferGeometryUtils";
 import Hexasphere from "./hexaspherejs/hexasphere";
 import { HexasphereArgs } from "./App";
@@ -9,7 +9,9 @@ interface Props {
   hexasphereArgs: typeof HexasphereArgs;
 }
 
-const depthRatio = 1.5;
+function getRandomArbitrary(min: number, max: number) {
+  return Math.random() * (max - min) + min;
+}
 
 export default function Fiber(props: Props) {
   const hexasphere = useMemo(
@@ -37,11 +39,12 @@ export default function Fiber(props: Props) {
       }
 
       // Outside points
+      const ratio = getRandomArbitrary(1, props.hexasphereArgs.maxTileRatio);
       for (const boundaryPoint of tile.boundary) {
         vertices.push(
-          boundaryPoint.x * depthRatio,
-          boundaryPoint.y * depthRatio,
-          boundaryPoint.z * depthRatio
+          boundaryPoint.x * ratio,
+          boundaryPoint.y * ratio,
+          boundaryPoint.z * ratio
         );
       }
 
@@ -103,26 +106,27 @@ export default function Fiber(props: Props) {
       }
 
       geometry.setAttribute("position", new Float32BufferAttribute(vertices, 3, false));
-      geometry.computeVertexNormals();
       geometry.setIndex(indices);
+      geometry.computeVertexNormals();
 
       tileGeometries.push(geometry);
     }
 
     return mergeBufferGeometries(tileGeometries);
-  }, [hexasphere]);
+  }, [hexasphere, props.hexasphereArgs.maxTileRatio]);
 
   return (
     <>
       <OrbitControls />
       <PerspectiveCamera position={[0, 0, 20]} makeDefault />
 
-      <mesh geometry={hexasphereGeometry}>
-        <meshStandardMaterial color="#87ceeb" />
+      <mesh geometry={hexasphereGeometry} receiveShadow castShadow>
+        <meshPhongMaterial color="#007A39" />
       </mesh>
 
-      <pointLight position={[50, 50, 10]} intensity={0.5} />
-      <ambientLight intensity={0.2} />
+      <pointLight position={[200, 200, 200]} args={[new Color("#88eeff"), 1000]} />
+
+      <ambientLight args={[new Color("#88eeff")]} />
     </>
   );
 }
