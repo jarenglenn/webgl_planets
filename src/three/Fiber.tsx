@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { Color } from "three";
-import { OrbitControls, PerspectiveCamera } from "@react-three/drei";
+import { OrbitControls, PerspectiveCamera, Stars } from "@react-three/drei";
 import { mergeBufferGeometries } from "three/examples/jsm/utils/BufferGeometryUtils";
 
 import Hexasphere from "../hexaspherejs/hexasphere";
@@ -38,6 +38,8 @@ export default function Fiber(props: Props) {
       <mesh geometry={hexasphereGeometry} receiveShadow castShadow>
         <meshPhongMaterial color="#567d46" flatShading />
       </mesh>
+
+      <Stars radius={100} depth={50} count={2500} factor={4} saturation={10} />
 
       <pointLight position={[200, 200, 200]} args={[new Color("#fff"), 1000]} />
 
