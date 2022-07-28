@@ -1,6 +1,8 @@
 import { useState } from "react";
 import styled from "styled-components";
-import ThreeCanvas from "./ThreeCanvas";
+
+import ThreeCanvas from "./three/ThreeCanvas";
+import { IHexasphereArgs } from "./types";
 
 const CanvasWrapper = styled.div`
   width: 100%;
@@ -14,10 +16,10 @@ const HTMLWrapper = styled.div`
   margin: 1rem;
 `;
 
-export const HexasphereArgs = {
+export const HexasphereArgs: IHexasphereArgs = {
   radius: 10,
   divisions: 5,
-  tileScale: 0.99,
+  tileScale: 1,
   maxTileRatio: 1.5,
 };
 
@@ -44,7 +46,7 @@ export default function App() {
           onChange={(event) => {
             handleClick("tileScale", event.target.valueAsNumber);
           }}
-        ></input>
+        />
         <p>divisions: {hexasphereArgs.divisions}</p>
         <input
           type="range"
@@ -55,7 +57,7 @@ export default function App() {
           onChange={(event) => {
             handleClick("divisions", event.target.valueAsNumber);
           }}
-        ></input>
+        />
         <p>radius: {hexasphereArgs.radius}</p>
         <input
           type="range"
@@ -66,18 +68,18 @@ export default function App() {
           onChange={(event) => {
             handleClick("radius", event.target.valueAsNumber);
           }}
-        ></input>
+        />
         <p>maxTileRatio: {hexasphereArgs.maxTileRatio}</p>
         <input
           type="range"
           min={1}
-          max={3}
-          step={0.05}
+          max={2}
+          step={0.01}
           value={hexasphereArgs.maxTileRatio}
           onChange={(event) => {
             handleClick("maxTileRatio", event.target.valueAsNumber);
           }}
-        ></input>
+        />
       </HTMLWrapper>
       <ThreeCanvas hexasphereArgs={hexasphereArgs} />;
     </CanvasWrapper>
