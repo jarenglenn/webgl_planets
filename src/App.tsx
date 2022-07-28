@@ -14,6 +14,7 @@ const HTMLWrapper = styled.div`
   top: 0;
   z-index: 10;
   margin: 1rem;
+  color: white;
 `;
 
 export const HexasphereArgs: IHexasphereArgs = {

@@ -81,10 +81,12 @@ export function computeTileGeometry(tile: Tile, hexasphereArgs: IHexasphereArgs)
 
   const vertices = computeVertices(tile, depthRatio);
   const indices = computeIndices(vertices.length > 30);
+  const colors: number[] = Array(vertices.length).fill(1);
 
   const geometry = new BufferGeometry();
 
   geometry.setAttribute("position", new Float32BufferAttribute(vertices, 3, false));
+  geometry.setAttribute("color", new Float32BufferAttribute(colors, 3, false));
   geometry.setIndex(indices);
   geometry.computeVertexNormals();
 

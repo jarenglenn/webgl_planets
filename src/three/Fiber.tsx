@@ -36,7 +36,7 @@ export default function Fiber(props: Props) {
       <PerspectiveCamera position={[0, 0, 20]} makeDefault />
 
       <mesh geometry={hexasphereGeometry} receiveShadow castShadow>
-        <meshPhongMaterial color="#567d46" flatShading />
+        <meshPhongMaterial vertexColors={true} flatShading />
       </mesh>
 
       <Stars radius={100} depth={50} count={2500} factor={4} saturation={10} />
