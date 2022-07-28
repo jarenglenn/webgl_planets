@@ -121,7 +121,7 @@ export default function Fiber(props: Props) {
       <PerspectiveCamera position={[0, 0, 20]} makeDefault />
 
       <mesh geometry={hexasphereGeometry} receiveShadow castShadow>
-        <meshPhongMaterial color="#007A39" />
+        <meshPhongMaterial color="#007A39" flatShading />
       </mesh>
 
       <pointLight position={[200, 200, 200]} args={[new Color("#88eeff"), 1000]} />
