@@ -1,6 +1,12 @@
-import { Suspense, useMemo } from "react";
-import { AxesHelper, Color } from "three";
-import { Environment, OrbitControls, PerspectiveCamera, Stars } from "@react-three/drei";
+import { Suspense, useMemo, useRef } from "react";
+import { AxesHelper, BufferGeometry, Color, Material, Mesh } from "three";
+import {
+  Environment,
+  OrbitControls,
+  PerspectiveCamera,
+  Sphere,
+  Stars,
+} from "@react-three/drei";
 import { mergeBufferGeometries } from "three/examples/jsm/utils/BufferGeometryUtils";
 
 import Hexasphere from "../hexaspherejs/hexasphere";
@@ -32,24 +38,34 @@ export default function Fiber(props: Props) {
     return mergeBufferGeometries(tileGeometries);
   }, [hexasphere, props]);
 
+  const hexasphereRef = useRef<Mesh<BufferGeometry, Material>>(null);
+
   return (
     <>
       <OrbitControls />
-      <PerspectiveCamera position={[0, 0, 20]} makeDefault />
+      <PerspectiveCamera position={[100, 0, 0]} makeDefault />
 
-      <mesh geometry={hexasphereGeometry} receiveShadow castShadow>
+      <mesh geometry={hexasphereGeometry} ref={hexasphereRef} receiveShadow castShadow>
         <meshPhysicalMaterial vertexColors={true} flatShading />
       </mesh>
 
       <Stars radius={100} depth={50} count={2500} factor={4} saturation={10} />
 
-      <pointLight
+      <spotLight
         position={[100, 0, 0]}
         args={[new Color("#fcd29f")]}
         intensity={150}
         distance={0}
         castShadow
+        shadow-mapSize-width={8192}
+        shadow-mapSize-height={8192}
+        shadow-camera-near={0.5}
+        shadow-camera-far={500}
       />
+
+      <Sphere args={[props.hexasphereArgs.radius]}>
+        <meshPhysicalMaterial color="black" />
+      </Sphere>
 
       <ambientLight intensity={0.025} />
 
