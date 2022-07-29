@@ -6,11 +6,11 @@ import { mergeBufferGeometries } from "three/examples/jsm/utils/BufferGeometryUt
 import Hexasphere from "../hexaspherejs/hexasphere";
 import { HexasphereArgs } from "../App";
 import computeTileGeometry from "./computeTileGeometry.ts";
-import { NoiseFunction2D } from "simplex-noise";
+import { NoiseFunction3D } from "simplex-noise";
 
 interface Props {
   hexasphereArgs: typeof HexasphereArgs;
-  noise2D: NoiseFunction2D;
+  noise3D: NoiseFunction3D;
 }
 
 export default function Fiber(props: Props) {
@@ -26,7 +26,7 @@ export default function Fiber(props: Props) {
 
   const hexasphereGeometry = useMemo(() => {
     const tileGeometries = hexasphere.tiles.map((tile) =>
-      computeTileGeometry(tile, props.hexasphereArgs, props.noise2D)
+      computeTileGeometry(tile, props.hexasphereArgs, props.noise3D)
     );
 
     return mergeBufferGeometries(tileGeometries);

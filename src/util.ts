@@ -19,3 +19,13 @@ export function hexToRGBFloatArray(hex: string) {
   const rgb = hexToRGB(hex);
   return [rgb.r / 255, rgb.g / 255, rgb.b / 255];
 }
+
+export const makeSeed = (length: number) => {
+  var text = "";
+  var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+  for (var i = 0; i < length; i++)
+    text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+  return text;
+};

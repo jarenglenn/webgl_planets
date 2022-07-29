@@ -1,5 +1,5 @@
 import { Canvas } from "@react-three/fiber";
-import { NoiseFunction2D } from "simplex-noise";
+import { NoiseFunction3D } from "simplex-noise";
 import { PCFSoftShadowMap } from "three";
 
 import { IHexasphereArgs } from "../types";
@@ -8,7 +8,7 @@ import ThreeConfig from "./ThreeConfig";
 
 interface Props {
   hexasphereArgs: IHexasphereArgs;
-  noise2D: NoiseFunction2D;
+  noise3D: NoiseFunction3D;
 }
 
 export default function ThreeCanvas(props: Props) {

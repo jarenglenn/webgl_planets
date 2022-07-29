@@ -1,4 +1,4 @@
-import { createNoise3D, NoiseFunction2D } from "simplex-noise";
+import { NoiseFunction3D } from "simplex-noise";
 import { BufferGeometry, Float32BufferAttribute } from "three";
 
 import Tile from "../hexaspherejs/tile";
@@ -74,12 +74,10 @@ function computeIndices(isHexagon: boolean) {
   return indices;
 }
 
-const noise3D = createNoise3D();
-
 function computeDepthRatio(
   tile: Tile,
   hexasphereArgs: IHexasphereArgs,
-  noise2D: NoiseFunction2D
+  noise3D: NoiseFunction3D
 ) {
   const { x, y, z } = tile.centerPoint;
 
@@ -121,9 +119,9 @@ function getVertexColors(vertices: number[], depthRatio: number) {
 export default function computeTileGeometry(
   tile: Tile,
   hexasphereArgs: IHexasphereArgs,
-  noise2D: NoiseFunction2D
+  noise3D: NoiseFunction3D
 ) {
-  const depthRatio = computeDepthRatio(tile, hexasphereArgs, noise2D);
+  const depthRatio = computeDepthRatio(tile, hexasphereArgs, noise3D);
 
   const vertices = computeVertices(tile, depthRatio);
   const vertexColors = getVertexColors(vertices, depthRatio);

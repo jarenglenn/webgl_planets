@@ -1,9 +1,11 @@
 import { useState } from "react";
 import styled from "styled-components";
-import { createNoise2D } from "simplex-noise";
+import { createNoise3D } from "simplex-noise";
 
 import ThreeCanvas from "./three/ThreeCanvas";
 import { IHexasphereArgs } from "./types";
+import { makeSeed } from "./util";
+import Alea from "alea";
 
 const CanvasWrapper = styled.div`
   width: 100%;
@@ -27,8 +29,9 @@ export const HexasphereArgs: IHexasphereArgs = {
 
 export default function App() {
   const [hexasphereArgs, setHexasphereArgs] = useState(HexasphereArgs);
+  const [seed, setSeed] = useState(makeSeed(10));
 
-  const noise2D = createNoise2D();
+  const noise3D = createNoise3D(Alea(seed));
 
   const handleClick = (key: keyof typeof HexasphereArgs, value: number) => {
     setHexasphereArgs({
@@ -84,8 +87,9 @@ export default function App() {
             handleClick("frequency", event.target.valueAsNumber);
           }}
         />
+        <button onClick={() => setSeed(makeSeed(10))}>Regenerate</button>
       </HTMLWrapper>
-      <ThreeCanvas hexasphereArgs={hexasphereArgs} noise2D={noise2D} />;
+      <ThreeCanvas hexasphereArgs={hexasphereArgs} noise3D={noise3D} />;
     </CanvasWrapper>
   );
 }
