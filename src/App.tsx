@@ -1,5 +1,6 @@
 import { useState } from "react";
 import styled from "styled-components";
+import { createNoise2D } from "simplex-noise";
 
 import ThreeCanvas from "./three/ThreeCanvas";
 import { IHexasphereArgs } from "./types";
@@ -19,13 +20,15 @@ const HTMLWrapper = styled.div`
 
 export const HexasphereArgs: IHexasphereArgs = {
   radius: 10,
-  divisions: 5,
+  divisions: 15,
   tileScale: 1,
-  maxTileRatio: 1.5,
+  frequency: 0.1,
 };
 
 export default function App() {
   const [hexasphereArgs, setHexasphereArgs] = useState(HexasphereArgs);
+
+  const noise2D = createNoise2D();
 
   const handleClick = (key: keyof typeof HexasphereArgs, value: number) => {
     setHexasphereArgs({
@@ -70,19 +73,19 @@ export default function App() {
             handleClick("radius", event.target.valueAsNumber);
           }}
         />
-        <p>maxTileRatio: {hexasphereArgs.maxTileRatio}</p>
+        <p>frequency: {hexasphereArgs.frequency}</p>
         <input
           type="range"
-          min={1}
-          max={2}
+          min={0.01}
+          max={1}
           step={0.01}
-          value={hexasphereArgs.maxTileRatio}
+          value={hexasphereArgs.frequency}
           onChange={(event) => {
-            handleClick("maxTileRatio", event.target.valueAsNumber);
+            handleClick("frequency", event.target.valueAsNumber);
           }}
         />
       </HTMLWrapper>
-      <ThreeCanvas hexasphereArgs={hexasphereArgs} />;
+      <ThreeCanvas hexasphereArgs={hexasphereArgs} noise2D={noise2D} />;
     </CanvasWrapper>
   );
 }

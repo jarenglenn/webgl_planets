@@ -1,11 +1,9 @@
+import { createNoise3D, NoiseFunction2D } from "simplex-noise";
 import { BufferGeometry, Float32BufferAttribute } from "three";
 
 import Tile from "../hexaspherejs/tile";
 import { IHexasphereArgs } from "../types";
-
-function getRandomArbitrary(min: number, max: number) {
-  return Math.random() * (max - min) + min;
-}
+import { hexToRGBFloatArray, repeatArray } from "../util";
 
 function computeVertices(tile: Tile, depthRatio: number) {
   const insideVertices = tile.boundary.flatMap((point) => [point.x, point.y, point.z]);
@@ -76,12 +74,52 @@ function computeIndices(isHexagon: boolean) {
   return indices;
 }
 
-export function computeTileGeometry(tile: Tile, hexasphereArgs: IHexasphereArgs) {
-  const depthRatio = getRandomArbitrary(1, hexasphereArgs.maxTileRatio);
+const noise3D = createNoise3D();
+
+function computeDepthRatio(
+  tile: Tile,
+  hexasphereArgs: IHexasphereArgs,
+  noise2D: NoiseFunction2D
+) {
+  const { x, y, z } = tile.centerPoint;
+
+  const f = hexasphereArgs.frequency;
+
+  let noise =
+    noise3D(x * f, y * f, z * f) +
+    0.5 * noise3D(2 * x + 5.3, 2 * y + 9.1, 2 * z + 14.2) +
+    0.25 * noise3D(4 * x + 19.4, 4 * y + 23.9, 4 * z + 28.2);
+
+  noise = noise / 2 + 0.5;
+  noise = noise / 3 + 1;
+
+  noise = Math.pow(noise * 1.05, 1.15);
+
+  return Math.max(noise, 1.2);
+}
+
+function getVertexColors(vertices: number[], depthRatio: number) {
+  const color = (() => {
+    if (depthRatio <= 1.2) return hexToRGBFloatArray("#4287f5");
+    else if (depthRatio < 1.25) return hexToRGBFloatArray("#feffae");
+    else if (depthRatio < 1.35) return hexToRGBFloatArray("#31703a");
+    else if (depthRatio < 1.45) return hexToRGBFloatArray("#83819c");
+    else return hexToRGBFloatArray("#eeeeee");
+  })();
+
+  return repeatArray(color, vertices.length / 3);
+}
+
+export default function computeTileGeometry(
+  tile: Tile,
+  hexasphereArgs: IHexasphereArgs,
+  noise2D: NoiseFunction2D
+) {
+  const depthRatio = computeDepthRatio(tile, hexasphereArgs, noise2D);
 
   const vertices = computeVertices(tile, depthRatio);
   const indices = computeIndices(vertices.length > 30);
-  const colors: number[] = Array(vertices.length).fill(1);
+  const colors = getVertexColors(vertices, depthRatio);
 
   const geometry = new BufferGeometry();
 

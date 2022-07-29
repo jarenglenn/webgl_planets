@@ -109,8 +109,8 @@ export default class Tile {
 
     // theta is a hack, since I want to rotate by Math.PI/2 to start.  sorryyyyyyyyyyy
     return {
-      lat: (180 * phi) / Math.PI - 90,
-      lon: (180 * theta) / Math.PI,
+      latitude: (180 * phi) / Math.PI - 90,
+      longitude: (180 * theta) / Math.PI,
     };
   };
 

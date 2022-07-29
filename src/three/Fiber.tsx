@@ -5,10 +5,12 @@ import { mergeBufferGeometries } from "three/examples/jsm/utils/BufferGeometryUt
 
 import Hexasphere from "../hexaspherejs/hexasphere";
 import { HexasphereArgs } from "../App";
-import { computeTileGeometry } from "./hexasphereUtils";
+import computeTileGeometry from "./computeTileGeometry.ts";
+import { NoiseFunction2D } from "simplex-noise";
 
 interface Props {
   hexasphereArgs: typeof HexasphereArgs;
+  noise2D: NoiseFunction2D;
 }
 
 export default function Fiber(props: Props) {
@@ -24,11 +26,11 @@ export default function Fiber(props: Props) {
 
   const hexasphereGeometry = useMemo(() => {
     const tileGeometries = hexasphere.tiles.map((tile) =>
-      computeTileGeometry(tile, props.hexasphereArgs)
+      computeTileGeometry(tile, props.hexasphereArgs, props.noise2D)
     );
 
     return mergeBufferGeometries(tileGeometries);
-  }, [hexasphere, props.hexasphereArgs]);
+  }, [hexasphere, props]);
 
   return (
     <>
