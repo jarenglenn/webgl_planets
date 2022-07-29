@@ -98,13 +98,21 @@ function computeDepthRatio(
   return Math.max(noise, 1.2);
 }
 
+class Biome {
+  static Ocean = hexToRGBFloatArray("#4287f5");
+  static Sand = hexToRGBFloatArray("#feffae");
+  static Grass = hexToRGBFloatArray("#31703a");
+  static Stone = hexToRGBFloatArray("#83819c");
+  static Snow = hexToRGBFloatArray("#eeeeee");
+}
+
 function getVertexColors(vertices: number[], depthRatio: number) {
   const color = (() => {
-    if (depthRatio <= 1.2) return hexToRGBFloatArray("#4287f5");
-    else if (depthRatio < 1.25) return hexToRGBFloatArray("#feffae");
-    else if (depthRatio < 1.35) return hexToRGBFloatArray("#31703a");
-    else if (depthRatio < 1.45) return hexToRGBFloatArray("#83819c");
-    else return hexToRGBFloatArray("#eeeeee");
+    if (depthRatio <= 1.2) return Biome.Ocean;
+    else if (depthRatio < 1.25) return Biome.Sand;
+    else if (depthRatio < 1.35) return Biome.Grass;
+    else if (depthRatio < 1.45) return Biome.Stone;
+    else return Biome.Snow;
   })();
 
   return repeatArray(color, vertices.length / 3);
@@ -118,13 +126,13 @@ export default function computeTileGeometry(
   const depthRatio = computeDepthRatio(tile, hexasphereArgs, noise2D);
 
   const vertices = computeVertices(tile, depthRatio);
+  const vertexColors = getVertexColors(vertices, depthRatio);
   const indices = computeIndices(vertices.length > 30);
-  const colors = getVertexColors(vertices, depthRatio);
 
   const geometry = new BufferGeometry();
 
   geometry.setAttribute("position", new Float32BufferAttribute(vertices, 3, false));
-  geometry.setAttribute("color", new Float32BufferAttribute(colors, 3, false));
+  geometry.setAttribute("color", new Float32BufferAttribute(vertexColors, 3, false));
   geometry.setIndex(indices);
   geometry.computeVertexNormals();
 

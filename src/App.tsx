@@ -19,10 +19,10 @@ const HTMLWrapper = styled.div`
 `;
 
 export const HexasphereArgs: IHexasphereArgs = {
-  radius: 10,
-  divisions: 15,
+  radius: 20,
+  divisions: 5,
   tileScale: 1,
-  frequency: 0.1,
+  frequency: 0.04,
 };
 
 export default function App() {
