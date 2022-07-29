@@ -1,5 +1,5 @@
 import { Suspense, useMemo } from "react";
-import { AxesHelper, Color } from "three";
+import { Color } from "three";
 import {
   Environment,
   OrbitControls,
@@ -69,8 +69,6 @@ export default function Fiber(props: Props) {
       </Sphere>
 
       <ambientLight intensity={0.025} />
-
-      <primitive object={new AxesHelper(100)} />
 
       <Suspense fallback={null}>
         <Environment files="/assets/space.hdr" background={false} />

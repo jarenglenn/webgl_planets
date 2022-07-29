@@ -1,5 +1,6 @@
 import { NoiseFunction3D } from "simplex-noise";
-import { BufferGeometry, Float32BufferAttribute } from "three";
+import { BoxGeometry, BufferGeometry, Float32BufferAttribute, Vector3 } from "three";
+import { mergeBufferGeometries } from "three/examples/jsm/utils/BufferGeometryUtils";
 
 import Tile from "../hexaspherejs/tile";
 import { IHexasphereArgs } from "../types";
@@ -124,7 +125,7 @@ class Biome {
   static Sand = hexToRGBFloatArray("#feffae");
   static Grass = hexToRGBFloatArray("#31703a");
   static Stone = hexToRGBFloatArray("#83819c");
-  static Snow = hexToRGBFloatArray("#eeeeee");
+  static Snow = hexToRGBFloatArray("#ffffff");
 }
 
 function getVertexColors(vertices: number[], depthRatio: number) {
@@ -139,6 +140,14 @@ function getVertexColors(vertices: number[], depthRatio: number) {
   return repeatArray(color, vertices.length / 3);
 }
 
+function outerTileCenterPoint(tile: Tile, depthRatio: number) {
+  return {
+    x: tile.centerPoint.x * depthRatio,
+    y: tile.centerPoint.y * depthRatio,
+    z: tile.centerPoint.z * depthRatio,
+  };
+}
+
 export default function computeTileGeometry(
   tile: Tile,
   hexasphereArgs: IHexasphereArgs,
@@ -150,12 +159,28 @@ export default function computeTileGeometry(
   const vertexColors = getVertexColors(vertices, depthRatio);
   const indices = computeIndices(vertices.length > 30);
 
-  const geometry = new BufferGeometry();
+  let geometry = new BufferGeometry();
 
   geometry.setAttribute("position", new Float32BufferAttribute(vertices, 3, false));
   geometry.setAttribute("color", new Float32BufferAttribute(vertexColors, 3, false));
   geometry.setIndex(indices);
   geometry.computeVertexNormals();
+
+  if (Math.random() < 0.05) {
+    const object = new BoxGeometry(0.5, 0.5, 0.5);
+
+    // set same attributes as tile geometry
+    const colors = Array(object.attributes.position.count * 3).fill(1);
+    object.setAttribute("color", new Float32BufferAttribute(colors, 3, false));
+    object.deleteAttribute("uv");
+
+    // translate to tile center
+    const { x, y, z } = outerTileCenterPoint(tile, depthRatio);
+    object.lookAt(new Vector3(x, y, z));
+    object.translate(x, y, z);
+
+    geometry = mergeBufferGeometries([geometry, object]);
+  }
 
   return geometry;
 }
