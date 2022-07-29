@@ -1,5 +1,5 @@
-import { Suspense, useMemo, useRef } from "react";
-import { AxesHelper, BufferGeometry, Color, Material, Mesh } from "three";
+import { Suspense, useMemo } from "react";
+import { AxesHelper, Color } from "three";
 import {
   Environment,
   OrbitControls,
@@ -38,29 +38,30 @@ export default function Fiber(props: Props) {
     return mergeBufferGeometries(tileGeometries);
   }, [hexasphere, props]);
 
-  const hexasphereRef = useRef<Mesh<BufferGeometry, Material>>(null);
-
   return (
     <>
       <OrbitControls />
       <PerspectiveCamera position={[100, 0, 0]} makeDefault />
 
-      <mesh geometry={hexasphereGeometry} ref={hexasphereRef} receiveShadow castShadow>
+      <mesh geometry={hexasphereGeometry} receiveShadow castShadow>
         <meshPhysicalMaterial vertexColors={true} flatShading />
       </mesh>
 
       <Stars radius={100} depth={50} count={2500} factor={4} saturation={10} />
 
-      <spotLight
+      <directionalLight
         position={[100, 0, 0]}
         args={[new Color("#fcd29f")]}
-        intensity={150}
-        distance={0}
+        intensity={2}
         castShadow
-        shadow-mapSize-width={8192}
-        shadow-mapSize-height={8192}
-        shadow-camera-near={0.5}
-        shadow-camera-far={500}
+        shadow-mapSize={[2048, 2048]}
+        shadow-camera-far={150}
+        shadow-camera-near={50}
+        shadow-camera-left={-50}
+        shadow-camera-right={50}
+        shadow-camera-top={50}
+        shadow-camera-bottom={-50}
+        shadow-bi
       />
 
       <Sphere args={[props.hexasphereArgs.radius]}>
@@ -72,7 +73,7 @@ export default function Fiber(props: Props) {
       <primitive object={new AxesHelper(100)} />
 
       <Suspense fallback={null}>
-        <Environment files="/assets/watermark_space.hdr" background={false} />
+        <Environment files="/assets/watermark_space.hdr" background={true} />
       </Suspense>
     </>
   );
