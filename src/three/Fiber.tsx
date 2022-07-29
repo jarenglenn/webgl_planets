@@ -44,7 +44,7 @@ export default function Fiber(props: Props) {
       <PerspectiveCamera position={[100, 0, 0]} makeDefault />
 
       <mesh geometry={hexasphereGeometry} receiveShadow castShadow>
-        <meshPhysicalMaterial vertexColors={true} flatShading />
+        <meshPhysicalMaterial vertexColors={true} flatShading envMapIntensity={0.2} />
       </mesh>
 
       <Stars radius={100} depth={50} count={2500} factor={4} saturation={10} />
@@ -73,7 +73,7 @@ export default function Fiber(props: Props) {
       <primitive object={new AxesHelper(100)} />
 
       <Suspense fallback={null}>
-        <Environment files="/assets/watermark_space.hdr" background={true} />
+        <Environment files="/assets/space.hdr" background={false} />
       </Suspense>
     </>
   );
