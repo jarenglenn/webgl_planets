@@ -22,9 +22,9 @@ const HTMLWrapper = styled.div`
 
 export const HexasphereArgs: IHexasphereArgs = {
   radius: 20,
-  divisions: 5,
+  divisions: 20,
   tileScale: 0.975,
-  frequency: 0.04,
+  frequency: 0.048,
 };
 
 export default function App() {
@@ -58,7 +58,7 @@ export default function App() {
         <input
           type="range"
           min={1}
-          max={20}
+          max={30}
           step={1}
           value={hexasphereArgs.divisions}
           onChange={(event) => {
@@ -79,9 +79,9 @@ export default function App() {
         <p>frequency: {hexasphereArgs.frequency}</p>
         <input
           type="range"
-          min={0.01}
-          max={1}
-          step={0.01}
+          min={0.001}
+          max={0.1}
+          step={0.001}
           value={hexasphereArgs.frequency}
           onChange={(event) => {
             handleClick("frequency", event.target.valueAsNumber);

@@ -74,26 +74,49 @@ function computeIndices(isHexagon: boolean) {
   return indices;
 }
 
+interface SumOctaveOptions {
+  numIterations: number;
+  position: { x: number; y: number; z: number };
+  persistence: number;
+  frequency: number;
+}
+
+function sumOctave(noise3D: NoiseFunction3D, options: SumOctaveOptions) {
+  let { numIterations, position: positionVector, persistence, frequency } = options;
+  let { x, y, z } = positionVector;
+
+  let maxAmplitude = 0;
+  let amplitude = 1;
+  let noise = 0;
+
+  // add successively smaller, higher-frequency terms
+  for (let i = 0; i < numIterations; ++i) {
+    noise += noise3D(x * frequency, y * frequency, z * frequency) * amplitude;
+    maxAmplitude += amplitude;
+    amplitude *= persistence;
+    frequency *= 2;
+  }
+
+  noise = noise / maxAmplitude; // take average value of iterations
+  noise = (noise * (1 - 0)) / 2 + (1 + 0) / 2; // normalize to 0-1
+
+  return (noise /= 2);
+}
+
 function computeDepthRatio(
   tile: Tile,
   hexasphereArgs: IHexasphereArgs,
   noise3D: NoiseFunction3D
 ) {
   const { x, y, z } = tile.centerPoint;
+  const noise = sumOctave(noise3D, {
+    numIterations: 8,
+    position: { x, y, z },
+    persistence: 0.5,
+    frequency: hexasphereArgs.frequency,
+  });
 
-  const f = hexasphereArgs.frequency;
-
-  let noise =
-    noise3D(x * f, y * f, z * f) +
-    0.5 * noise3D(2 * x + 5.3, 2 * y + 9.1, 2 * z + 14.2) +
-    0.25 * noise3D(4 * x + 19.4, 4 * y + 23.9, 4 * z + 28.2);
-
-  noise = noise / 2 + 0.5;
-  noise = noise / 3 + 1;
-
-  noise = Math.pow(noise * 1.05, 1.15);
-
-  return Math.max(noise, 1.2);
+  return Math.max(noise, 0.2) + 1;
 }
 
 class Biome {
@@ -108,8 +131,8 @@ function getVertexColors(vertices: number[], depthRatio: number) {
   const color = (() => {
     if (depthRatio <= 1.2) return Biome.Ocean;
     else if (depthRatio < 1.25) return Biome.Sand;
-    else if (depthRatio < 1.35) return Biome.Grass;
-    else if (depthRatio < 1.45) return Biome.Stone;
+    else if (depthRatio < 1.3) return Biome.Grass;
+    else if (depthRatio < 1.35) return Biome.Stone;
     else return Biome.Snow;
   })();
 
