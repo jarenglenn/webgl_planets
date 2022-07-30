@@ -1,3 +1,5 @@
+import { ColorArray } from "./types";
+
 export function repeatArray(array: any[], count: number) {
   const result = [];
   for (let i = 0; i < count; i++) {
@@ -15,7 +17,7 @@ export function hexToRGB(hex: string) {
   };
 }
 
-export function hexToRGBFloatArray(hex: string) {
+export function hexToRGBFloatArray(hex: string): ColorArray {
   const rgb = hexToRGB(hex);
   return [rgb.r / 255, rgb.g / 255, rgb.b / 255];
 }

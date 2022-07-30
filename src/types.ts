@@ -4,3 +4,7 @@ export interface IHexasphereArgs {
   tileScale: number;
   frequency: number;
 }
+
+export type ColorArray = [number, number, number];
+
+export type Point = { x: number; y: number; z: number };

@@ -1,10 +1,10 @@
 import { NoiseFunction3D } from "simplex-noise";
-import { BoxGeometry, BufferGeometry, Float32BufferAttribute, Vector3 } from "three";
-import { mergeBufferGeometries } from "three/examples/jsm/utils/BufferGeometryUtils";
+import { BufferGeometry, Float32BufferAttribute } from "three";
 
 import Tile from "../hexaspherejs/tile";
 import { IHexasphereArgs } from "../types";
-import { hexToRGBFloatArray, repeatArray } from "../util";
+import { repeatArray } from "../util";
+import { getVertexColor } from "./tileUtils";
 
 function computeVertices(tile: Tile, depthRatio: number) {
   const insideVertices = tile.boundary.flatMap((point) => [point.x, point.y, point.z]);
@@ -110,43 +110,17 @@ function computeDepthRatio(
   hexasphereArgs: IHexasphereArgs,
   noise3D: NoiseFunction3D
 ) {
+  const noiseAtRadius = 20; // radius from which to sample noise even if physical radius is different
+
   const { x, y, z } = tile.centerPoint;
   const noise = sumOctave(noise3D, {
     numIterations: 8,
     position: { x, y, z },
     persistence: 0.5,
-    frequency: hexasphereArgs.frequency * 20 * (1 / hexasphereArgs.radius),
+    frequency: hexasphereArgs.frequency * noiseAtRadius * (1 / hexasphereArgs.radius),
   });
 
   return Math.max(noise, 0.2) + 1;
-}
-
-class Biome {
-  static Ocean = hexToRGBFloatArray("#4287f5");
-  static Sand = hexToRGBFloatArray("#feffae");
-  static Grass = hexToRGBFloatArray("#31703a");
-  static Stone = hexToRGBFloatArray("#83819c");
-  static Snow = hexToRGBFloatArray("#ffffff");
-}
-
-function getVertexColors(vertices: number[], depthRatio: number) {
-  const color = (() => {
-    if (depthRatio <= 1.2) return Biome.Ocean;
-    else if (depthRatio < 1.25) return Biome.Sand;
-    else if (depthRatio < 1.3) return Biome.Grass;
-    else if (depthRatio < 1.35) return Biome.Stone;
-    else return Biome.Snow;
-  })();
-
-  return repeatArray(color, vertices.length / 3);
-}
-
-function outerTileCenterPoint(tile: Tile, depthRatio: number) {
-  return {
-    x: tile.centerPoint.x * depthRatio,
-    y: tile.centerPoint.y * depthRatio,
-    z: tile.centerPoint.z * depthRatio,
-  };
 }
 
 export default function computeTileGeometry(
@@ -157,7 +131,7 @@ export default function computeTileGeometry(
   const depthRatio = computeDepthRatio(tile, hexasphereArgs, noise3D);
 
   const vertices = computeVertices(tile, depthRatio);
-  const vertexColors = getVertexColors(vertices, depthRatio);
+  const vertexColors = repeatArray(getVertexColor(depthRatio), vertices.length / 3);
   const indices = computeIndices(vertices.length > 30);
 
   let geometry = new BufferGeometry();
@@ -166,22 +140,6 @@ export default function computeTileGeometry(
   geometry.setAttribute("color", new Float32BufferAttribute(vertexColors, 3, false));
   geometry.setIndex(indices);
   geometry.computeVertexNormals();
-
-  if (Math.random() < 0.05) {
-    const object = new BoxGeometry(0.5, 0.5, 0.5);
-
-    // set same attributes as tile geometry
-    const colors = Array(object.attributes.position.count * 3).fill(1);
-    object.setAttribute("color", new Float32BufferAttribute(colors, 3, false));
-    object.deleteAttribute("uv");
-
-    // translate to tile center
-    const { x, y, z } = outerTileCenterPoint(tile, depthRatio);
-    object.lookAt(new Vector3(x, y, z));
-    object.translate(x, y, z);
-
-    geometry = mergeBufferGeometries([geometry, object]);
-  }
 
   return geometry;
 }
