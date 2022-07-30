@@ -1,3 +1,4 @@
+import { Biome } from "../three/tileUtils";
 import Face from "./face";
 import Point from "./point";
 
@@ -54,6 +55,10 @@ export default class Tile {
   neighborIds: string[];
   neighbors: Tile[];
   boundary: Point[];
+
+  // Custom data set after geometry computation
+  depthRatio?: number;
+  biome?: Biome;
 
   constructor(centerPoint: Point, hexSize?: number) {
     if (hexSize === undefined) {
@@ -139,5 +144,13 @@ export default class Tile {
 
   toString = function (this: Tile) {
     return this.centerPoint.toString();
+  };
+
+  checkExists = function (this: Tile, key: keyof Tile, methodName?: string) {
+    if (!this[key]) {
+      throw new Error(
+        `${methodName} assumed computed ${key} for tile: ${this}, instead got ${this[key]}`
+      );
+    }
   };
 }

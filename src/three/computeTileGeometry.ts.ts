@@ -6,9 +6,11 @@ import { IPlanetArgs } from "../types";
 import { repeatArray } from "../util";
 import { getVertexColor } from "./tileUtils";
 
-function computeVertices(tile: Tile, depthRatio: number) {
+function computeVertices(tile: Tile) {
+  tile.checkExists("depthRatio", "computeVertices");
+
   const insideVertices = tile.boundary.flatMap((point) => [point.x, point.y, point.z]);
-  const outsideVertices = insideVertices.map((point) => point * depthRatio);
+  const outsideVertices = insideVertices.map((point) => point * tile.depthRatio!);
 
   return [...insideVertices, ...outsideVertices];
 }
@@ -129,15 +131,19 @@ export default function computeTileGeometry(
   noise3D: NoiseFunction3D
 ) {
   const depthRatio = computeDepthRatio(tile, planetArgs, noise3D);
+  const biomeColor = getVertexColor(depthRatio);
 
-  const vertices = computeVertices(tile, depthRatio);
-  const vertexColors = repeatArray(getVertexColor(depthRatio), vertices.length / 3);
+  tile.depthRatio = depthRatio;
+  tile.biome = biomeColor;
+
+  const vertices = computeVertices(tile);
+  const colors = repeatArray(biomeColor, vertices.length / 3);
   const indices = computeIndices(vertices.length > 30);
 
   let geometry = new BufferGeometry();
 
   geometry.setAttribute("position", new Float32BufferAttribute(vertices, 3, false));
-  geometry.setAttribute("color", new Float32BufferAttribute(vertexColors, 3, false));
+  geometry.setAttribute("color", new Float32BufferAttribute(colors, 3, false));
   geometry.setIndex(indices);
   geometry.computeVertexNormals();
 

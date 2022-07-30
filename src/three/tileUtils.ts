@@ -30,9 +30,10 @@ export function scaledPoint(point: Point, depthRatio: number) {
   };
 }
 
-export function outerCircumradius(tile: Tile, depthRatio: number) {
-  const centerPoint = scaledPoint(tile.centerPoint, depthRatio);
-  const boundaryPoint = scaledPoint(tile.boundary[0], depthRatio);
+export function outerCircumradius(tile: Tile) {
+  tile.checkExists("depthRatio", "outerCircumradius");
+  const centerPoint = scaledPoint(tile.centerPoint, tile.depthRatio!);
+  const boundaryPoint = scaledPoint(tile.boundary[0], tile.depthRatio!);
 
   return Math.sqrt(
     (centerPoint.x - boundaryPoint.x) ** 2 +
