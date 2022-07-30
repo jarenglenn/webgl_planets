@@ -2,7 +2,7 @@ import { NoiseFunction3D } from "simplex-noise";
 import { BufferGeometry, Float32BufferAttribute } from "three";
 
 import Tile from "../hexaspherejs/tile";
-import { IHexasphereArgs } from "../types";
+import { IPlanetArgs } from "../types";
 import { repeatArray } from "../util";
 import { getVertexColor } from "./tileUtils";
 
@@ -107,7 +107,7 @@ function sumOctave(noise3D: NoiseFunction3D, options: SumOctaveOptions) {
 
 function computeDepthRatio(
   tile: Tile,
-  hexasphereArgs: IHexasphereArgs,
+  planetArgs: IPlanetArgs,
   noise3D: NoiseFunction3D
 ) {
   const noiseAtRadius = 20; // radius from which to sample noise even if physical radius is different
@@ -117,7 +117,7 @@ function computeDepthRatio(
     numIterations: 8,
     position: { x, y, z },
     persistence: 0.5,
-    frequency: hexasphereArgs.frequency * noiseAtRadius * (1 / hexasphereArgs.radius),
+    frequency: planetArgs.frequency * noiseAtRadius * (1 / planetArgs.radius),
   });
 
   return Math.max(noise, 0.2) + 1;
@@ -125,10 +125,10 @@ function computeDepthRatio(
 
 export default function computeTileGeometry(
   tile: Tile,
-  hexasphereArgs: IHexasphereArgs,
+  planetArgs: IPlanetArgs,
   noise3D: NoiseFunction3D
 ) {
-  const depthRatio = computeDepthRatio(tile, hexasphereArgs, noise3D);
+  const depthRatio = computeDepthRatio(tile, planetArgs, noise3D);
 
   const vertices = computeVertices(tile, depthRatio);
   const vertexColors = repeatArray(getVertexColor(depthRatio), vertices.length / 3);

@@ -1,12 +1,12 @@
 import { Canvas } from "@react-three/fiber";
 import { NoiseFunction3D } from "simplex-noise";
 
-import { IHexasphereArgs } from "../types";
+import { IPlanetArgs } from "../types";
 import Fiber from "./Fiber";
 import ThreeConfig from "./ThreeConfig";
 
 interface Props {
-  hexasphereArgs: IHexasphereArgs;
+  planetArgs: IPlanetArgs;
   noise3D: NoiseFunction3D;
 }
 

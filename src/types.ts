@@ -1,4 +1,4 @@
-export interface IHexasphereArgs {
+export interface IPlanetArgs {
   radius: number;
   divisions: number;
   tileScale: number;

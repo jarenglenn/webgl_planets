@@ -10,40 +10,40 @@ import {
 import { mergeBufferGeometries } from "three/examples/jsm/utils/BufferGeometryUtils";
 
 import Hexasphere from "../hexaspherejs/hexasphere";
-import { HexasphereArgs } from "../App";
 import computeTileGeometry from "./computeTileGeometry.ts";
 import { NoiseFunction3D } from "simplex-noise";
+import { IPlanetArgs } from "../types";
 
 interface Props {
-  hexasphereArgs: typeof HexasphereArgs;
+  planetArgs: IPlanetArgs;
   noise3D: NoiseFunction3D;
 }
 
 export default function Fiber(props: Props) {
-  const hexasphere = useMemo(
+  const planet = useMemo(
     () =>
       new Hexasphere(
-        props.hexasphereArgs.radius,
-        props.hexasphereArgs.divisions,
-        props.hexasphereArgs.tileScale
+        props.planetArgs.radius,
+        props.planetArgs.divisions,
+        props.planetArgs.tileScale
       ),
-    [props.hexasphereArgs]
+    [props.planetArgs]
   );
 
-  const hexasphereGeometry = useMemo(() => {
-    const tileGeometries = hexasphere.tiles.map((tile) =>
-      computeTileGeometry(tile, props.hexasphereArgs, props.noise3D)
+  const planetGeometry = useMemo(() => {
+    const tileGeometries = planet.tiles.map((tile) =>
+      computeTileGeometry(tile, props.planetArgs, props.noise3D)
     );
 
     return mergeBufferGeometries(tileGeometries);
-  }, [hexasphere, props]);
+  }, [planet, props]);
 
   return (
     <>
       <OrbitControls />
       <PerspectiveCamera position={[100, 0, 0]} makeDefault />
 
-      <mesh geometry={hexasphereGeometry} receiveShadow castShadow>
+      <mesh geometry={planetGeometry} receiveShadow castShadow>
         <meshPhysicalMaterial vertexColors={true} flatShading envMapIntensity={0.2} />
       </mesh>
 
@@ -64,7 +64,7 @@ export default function Fiber(props: Props) {
         shadow-bi
       />
 
-      <Sphere args={[props.hexasphereArgs.radius]}>
+      <Sphere args={[props.planetArgs.radius]}>
         <meshPhysicalMaterial color="black" />
       </Sphere>
 
