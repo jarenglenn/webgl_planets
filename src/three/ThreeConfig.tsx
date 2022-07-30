@@ -10,7 +10,7 @@ export default function ThreeConfig() {
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = PCFSoftShadowMap;
 
-  scene.background = new Color("#444");
+  scene.background = new Color("#111");
 
   return <></>;
 }

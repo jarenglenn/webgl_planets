@@ -22,8 +22,8 @@ const HTMLWrapper = styled.div`
 
 export const HexasphereArgs: IHexasphereArgs = {
   radius: 20,
-  divisions: 20,
-  tileScale: 0.975,
+  divisions: 10,
+  tileScale: 1,
   frequency: 0.048,
 };
 

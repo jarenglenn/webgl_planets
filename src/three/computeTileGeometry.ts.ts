@@ -82,6 +82,7 @@ interface SumOctaveOptions {
   frequency: number;
 }
 
+// https://cmaher.github.io/posts/working-with-simplex-noise/
 function sumOctave(noise3D: NoiseFunction3D, options: SumOctaveOptions) {
   let { numIterations, position: positionVector, persistence, frequency } = options;
   let { x, y, z } = positionVector;
@@ -114,7 +115,7 @@ function computeDepthRatio(
     numIterations: 8,
     position: { x, y, z },
     persistence: 0.5,
-    frequency: hexasphereArgs.frequency,
+    frequency: hexasphereArgs.frequency * 20 * (1 / hexasphereArgs.radius),
   });
 
   return Math.max(noise, 0.2) + 1;
