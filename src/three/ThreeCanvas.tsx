@@ -7,7 +7,10 @@ import ThreeConfig from "./ThreeConfig";
 
 interface Props {
   planetArgs: IPlanetArgs;
-  noise3D: NoiseFunction3D;
+  noiseFunctions: {
+    planet: NoiseFunction3D;
+    trees: NoiseFunction3D;
+  };
 }
 
 export default function ThreeCanvas(props: Props) {

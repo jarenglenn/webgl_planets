@@ -1,7 +1,8 @@
-import { BufferAttribute, BufferGeometry } from "three";
+import { BufferAttribute, BufferGeometry, Euler, Quaternion } from "three";
+
 import Tile from "../hexaspherejs/tile";
 import { Point } from "../types";
-import { hexToRGBFloatArray, repeatArray } from "../util";
+import { hexToRGBFloatArray, randomBetween, repeatArray } from "../util";
 
 export class Biome {
   static Ocean = hexToRGBFloatArray("#4287f5");
@@ -49,4 +50,15 @@ export function colorGeometry(geometry: BufferGeometry, color: string) {
     geometry.attributes.position.count
   );
   geometry.setAttribute("color", new BufferAttribute(new Float32Array(colors), 3));
+}
+
+export function randomRotate(geometry: BufferGeometry) {
+  const eulerRotation = new Euler(
+    randomBetween(0, 2 * Math.PI),
+    randomBetween(0, 2 * Math.PI),
+    randomBetween(0, 2 * Math.PI)
+  );
+
+  const quaternion = new Quaternion().setFromEuler(eulerRotation);
+  geometry.applyQuaternion(quaternion);
 }

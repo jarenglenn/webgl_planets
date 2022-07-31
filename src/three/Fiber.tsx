@@ -17,7 +17,10 @@ import { createPlanetDetails } from "./createTileDetails";
 
 interface Props {
   planetArgs: IPlanetArgs;
-  noise3D: NoiseFunction3D;
+  noiseFunctions: {
+    planet: NoiseFunction3D;
+    trees: NoiseFunction3D;
+  };
 }
 
 export default function Fiber(props: Props) {
@@ -33,7 +36,7 @@ export default function Fiber(props: Props) {
 
   const planetGeometry = useMemo(() => {
     const tileGeometries = planet.tiles.map((tile) =>
-      computeTileGeometry(tile, props.planetArgs, props.noise3D)
+      computeTileGeometry(tile, props.planetArgs, props.noiseFunctions.planet)
     );
     const geometry = mergeBufferGeometries(tileGeometries);
 
@@ -41,8 +44,8 @@ export default function Fiber(props: Props) {
   }, [planet, props]);
 
   const { rocksGeometry, treesGeometry } = useMemo(() => {
-    return createPlanetDetails(planet);
-  }, [planet]);
+    return createPlanetDetails(planet, props.noiseFunctions.trees);
+  }, [planet, props.noiseFunctions]);
 
   return (
     <>

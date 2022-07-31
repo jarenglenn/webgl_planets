@@ -27,13 +27,26 @@ export const PlanetArgs: IPlanetArgs = {
   frequency: 0.048,
 };
 
+function makeSeeds(number: number, seedLength: number) {
+  return Array(number)
+    .fill("")
+    .map(() => makeSeed(seedLength));
+}
+
 export default function App() {
   const [planetArgs, setPlanetArgs] = useState(PlanetArgs);
-  const [seed, setSeed] = useState(makeSeed(10));
+  const [seeds, setSeeds] = useState(makeSeeds(2, 10));
 
-  const noise3D = createNoise3D(Alea(seed));
+  const noiseFunctions = {
+    trees: createNoise3D(Alea(seeds[0])),
+    planet: createNoise3D(Alea(seeds[1])),
+  };
 
-  const handleClick = (key: keyof IPlanetArgs, value: number) => {
+  const handleRegenerate = () => {
+    setSeeds(makeSeeds(2, 10));
+  };
+
+  const handleChangeParams = (key: keyof IPlanetArgs, value: number) => {
     setPlanetArgs({
       ...planetArgs,
       [key]: value,
@@ -51,7 +64,7 @@ export default function App() {
           step={0.01}
           value={planetArgs.tileScale}
           onChange={(event) => {
-            handleClick("tileScale", event.target.valueAsNumber);
+            handleChangeParams("tileScale", event.target.valueAsNumber);
           }}
         />
         <p>divisions: {planetArgs.divisions}</p>
@@ -62,7 +75,7 @@ export default function App() {
           step={5}
           value={planetArgs.divisions}
           onChange={(event) => {
-            handleClick("divisions", event.target.valueAsNumber);
+            handleChangeParams("divisions", event.target.valueAsNumber);
           }}
         />
         <p>radius: {planetArgs.radius}</p>
@@ -73,7 +86,7 @@ export default function App() {
           step={1}
           value={planetArgs.radius}
           onChange={(event) => {
-            handleClick("radius", event.target.valueAsNumber);
+            handleChangeParams("radius", event.target.valueAsNumber);
           }}
         />
         <p>frequency: {planetArgs.frequency}</p>
@@ -84,12 +97,12 @@ export default function App() {
           step={0.001}
           value={planetArgs.frequency}
           onChange={(event) => {
-            handleClick("frequency", event.target.valueAsNumber);
+            handleChangeParams("frequency", event.target.valueAsNumber);
           }}
         />
-        <button onClick={() => setSeed(makeSeed(10))}>Regenerate</button>
+        <button onClick={handleRegenerate}>Regenerate</button>
       </HTMLWrapper>
-      <ThreeCanvas planetArgs={planetArgs} noise3D={noise3D} />;
+      <ThreeCanvas planetArgs={planetArgs} noiseFunctions={noiseFunctions} />;
     </CanvasWrapper>
   );
 }

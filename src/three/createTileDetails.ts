@@ -1,28 +1,23 @@
+import { NoiseFunction3D } from "simplex-noise";
 import {
   BufferGeometry,
   CylinderGeometry,
-  Euler,
   Float32BufferAttribute,
-  Quaternion,
   SphereGeometry,
   Vector3,
 } from "three";
 import { mergeBufferGeometries } from "three/examples/jsm/utils/BufferGeometryUtils";
 import Hexasphere from "../hexaspherejs/hexasphere";
 import Tile from "../hexaspherejs/tile";
+import { sumOctave } from "../noise";
 import { randomBetween, repeatArray } from "../util";
-import { Biome, colorGeometry, outerCircumradius, scaledPoint } from "./tileUtils";
-
-function randomRotate(geometry: BufferGeometry) {
-  const eulerRotation = new Euler(
-    randomBetween(0, 2 * Math.PI),
-    randomBetween(0, 2 * Math.PI),
-    randomBetween(0, 2 * Math.PI)
-  );
-
-  const quaternion = new Quaternion().setFromEuler(eulerRotation);
-  geometry.applyQuaternion(quaternion);
-}
+import {
+  Biome,
+  colorGeometry,
+  outerCircumradius,
+  randomRotate,
+  scaledPoint,
+} from "./tileUtils";
 
 function createRockGeometry(tile: Tile) {
   const tileRadius = outerCircumradius(tile);
@@ -80,7 +75,11 @@ interface DetailGeometries {
   rocks: BufferGeometry[];
 }
 
-function createTileDetail(tile: Tile, geometries: DetailGeometries) {
+function createTileDetail(
+  tile: Tile,
+  geometries: DetailGeometries,
+  treesNoiseFunction: NoiseFunction3D
+) {
   tile.checkExists(["biome", "depthRatio"], "createTileDetail");
 
   // Rocks
@@ -100,8 +99,20 @@ function createTileDetail(tile: Tile, geometries: DetailGeometries) {
 
     geometries.rocks.push(rockGeometry);
   }
+
   // Trees
-  else if (tile.biome === Biome.Grass && Math.random() < 0.1) {
+  else if (tile.biome === Biome.Grass) {
+    const { x, y, z } = tile.centerPoint;
+    const noise = sumOctave(treesNoiseFunction, {
+      numIterations: 8,
+      position: { x, y, z },
+      persistence: 0.5,
+      frequency: 0.048 * 20 * (1 / 20),
+    });
+
+    // Math.random() to avoid having no empty tiles in dense forests
+    if (noise < 0.3 || Math.random() > 0.2) return;
+
     const treeGeometry = createTreeGeometry(tile);
 
     const to = scaledPoint(tile.centerPoint, tile.depthRatio!);
@@ -112,14 +123,14 @@ function createTileDetail(tile: Tile, geometries: DetailGeometries) {
   }
 }
 
-export function createPlanetDetails(planet: Hexasphere) {
+export function createPlanetDetails(planet: Hexasphere, noise3D: NoiseFunction3D) {
   const geometries: DetailGeometries = {
     trees: [],
     rocks: [],
   };
 
   planet.tiles.forEach((tile) => {
-    createTileDetail(tile, geometries);
+    createTileDetail(tile, geometries, noise3D);
   });
 
   return {
