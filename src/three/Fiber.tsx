@@ -13,6 +13,7 @@ import Hexasphere from "../hexaspherejs/hexasphere";
 import computeTileGeometry from "./computeTileGeometry.ts";
 import { NoiseFunction3D } from "simplex-noise";
 import { IPlanetArgs } from "../types";
+import { createPlanetDetails } from "./createTileDetails";
 
 interface Props {
   planetArgs: IPlanetArgs;
@@ -34,9 +35,14 @@ export default function Fiber(props: Props) {
     const tileGeometries = planet.tiles.map((tile) =>
       computeTileGeometry(tile, props.planetArgs, props.noise3D)
     );
+    const geometry = mergeBufferGeometries(tileGeometries);
 
-    return mergeBufferGeometries(tileGeometries);
+    return geometry;
   }, [planet, props]);
+
+  const { rocksGeometry, treesGeometry } = useMemo(() => {
+    return createPlanetDetails(planet);
+  }, [planet]);
 
   return (
     <>
@@ -44,24 +50,39 @@ export default function Fiber(props: Props) {
       <PerspectiveCamera position={[100, 0, 0]} makeDefault />
 
       <mesh geometry={planetGeometry} receiveShadow castShadow>
-        <meshPhysicalMaterial vertexColors={true} flatShading envMapIntensity={0.2} />
+        <meshPhysicalMaterial
+          vertexColors
+          flatShading
+          envMapIntensity={0.3}
+          polygonOffset={true}
+          polygonOffsetFactor={0.001}
+          polygonOffsetUnits={1}
+        />
+      </mesh>
+
+      <mesh receiveShadow geometry={treesGeometry} castShadow>
+        <meshPhysicalMaterial flatShading envMapIntensity={0.2} vertexColors />
+      </mesh>
+
+      <mesh receiveShadow geometry={rocksGeometry} castShadow>
+        <meshPhysicalMaterial vertexColors flatShading envMapIntensity={0.2} />
       </mesh>
 
       <Stars radius={100} depth={50} count={2500} factor={4} saturation={10} />
 
       <directionalLight
-        position={[100, 0, 0]}
+        position={[50, 0, 0]}
         args={[new Color("#fcd29f")]}
         intensity={2}
         castShadow
         shadow-mapSize={[2048, 2048]}
-        shadow-camera-far={150}
-        shadow-camera-near={50}
+        shadow-camera-far={100}
+        shadow-camera-near={0.1}
         shadow-camera-left={-50}
         shadow-camera-right={50}
         shadow-camera-top={50}
         shadow-camera-bottom={-50}
-        shadow-bi
+        // shadow-bias={-0.001}
       />
 
       <Sphere args={[props.planetArgs.radius]}>

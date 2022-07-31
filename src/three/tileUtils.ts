@@ -1,6 +1,7 @@
+import { BufferAttribute, BufferGeometry } from "three";
 import Tile from "../hexaspherejs/tile";
 import { Point } from "../types";
-import { hexToRGBFloatArray } from "../util";
+import { hexToRGBFloatArray, repeatArray } from "../util";
 
 export class Biome {
   static Ocean = hexToRGBFloatArray("#4287f5");
@@ -40,4 +41,12 @@ export function outerCircumradius(tile: Tile) {
       (centerPoint.y - boundaryPoint.y) ** 2 +
       (centerPoint.z - boundaryPoint.z) ** 2
   );
+}
+
+export function colorGeometry(geometry: BufferGeometry, color: string) {
+  const colors = repeatArray(
+    hexToRGBFloatArray(color),
+    geometry.attributes.position.count
+  );
+  geometry.setAttribute("color", new BufferAttribute(new Float32Array(colors), 3));
 }

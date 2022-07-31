@@ -34,3 +34,7 @@ export const makeSeed = (length: number) => {
 
 export const clamp = (num: number, min: number, max: number) =>
   Math.min(Math.max(num, min), max);
+
+export function randomBetween(min: number, max: number) {
+  return Math.random() * (max - min) + min;
+}

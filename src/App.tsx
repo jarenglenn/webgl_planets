@@ -22,7 +22,7 @@ const HTMLWrapper = styled.div`
 
 export const PlanetArgs: IPlanetArgs = {
   radius: 20,
-  divisions: 30,
+  divisions: 20,
   tileScale: 1,
   frequency: 0.048,
 };
@@ -58,8 +58,8 @@ export default function App() {
         <input
           type="range"
           min={1}
-          max={30}
-          step={1}
+          max={100}
+          step={5}
           value={planetArgs.divisions}
           onChange={(event) => {
             handleClick("divisions", event.target.valueAsNumber);

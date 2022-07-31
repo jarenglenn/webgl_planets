@@ -16,6 +16,8 @@ function vector(p1: Point, p2: Point) {
   };
 }
 
+type TileKeys = keyof Tile | (keyof Tile)[];
+
 // https://www.khronos.org/opengl/wiki/Calculating_a_Surface_Normal
 // Set Vector U to (Triangle.p2 minus Triangle.p1)
 // Set Vector V to (Triangle.p3 minus Triangle.p1)
@@ -146,11 +148,19 @@ export default class Tile {
     return this.centerPoint.toString();
   };
 
-  checkExists = function (this: Tile, key: keyof Tile, methodName?: string) {
-    if (!this[key]) {
-      throw new Error(
-        `${methodName} assumed computed ${key} for tile: ${this}, instead got ${this[key]}`
-      );
+  checkExists = function (this: Tile, keys: TileKeys, methodName?: string) {
+    const checkKey = (key: keyof Tile) => {
+      if (!this[key]) {
+        throw new Error(
+          `${methodName} assumed computed ${key} for tile: ${this}, instead got ${this[key]}`
+        );
+      }
+    };
+
+    if (typeof keys === "string") {
+      checkKey(keys);
+    } else {
+      keys.forEach((key) => checkKey(key));
     }
   };
 }
