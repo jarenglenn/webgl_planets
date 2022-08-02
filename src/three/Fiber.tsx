@@ -10,7 +10,7 @@ import {
 import { mergeBufferGeometries } from "three/examples/jsm/utils/BufferGeometryUtils";
 
 import Hexasphere from "../hexaspherejs/hexasphere";
-import computeTileGeometry from "./computeTileGeometry.ts";
+import computeTileGeometry from "./computeTileGeometry";
 import { NoiseFunction3D } from "simplex-noise";
 import { IPlanetArgs } from "../types";
 import { createPlanetDetails } from "./createTileDetails";
@@ -41,7 +41,7 @@ export default function Fiber(props: Props) {
     const geometry = mergeBufferGeometries(tileGeometries);
 
     return geometry;
-  }, [planet, props]);
+  }, [planet, props.planetArgs, props.noiseFunctions]);
 
   const { rocksGeometry, treesGeometry } = useMemo(() => {
     return createPlanetDetails(planet, props.noiseFunctions.trees);
@@ -49,7 +49,13 @@ export default function Fiber(props: Props) {
 
   return (
     <>
-      <OrbitControls />
+      <OrbitControls
+        maxDistance={250}
+        minDistance={props.planetArgs.radius * 1.5}
+        autoRotate
+        autoRotateSpeed={0.2}
+        enablePan={false}
+      />
       <PerspectiveCamera position={[100, 0, 0]} makeDefault />
 
       <mesh geometry={planetGeometry} receiveShadow castShadow>

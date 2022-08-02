@@ -12,5 +12,10 @@ export default function ThreeConfig() {
 
   scene.background = new Color("#111");
 
+  console.log("Scene polycount:", renderer.info.render.triangles);
+  console.log("Active Drawcalls:", renderer.info.render.calls);
+  console.log("Textures in Memory", renderer.info.memory.textures);
+  console.log("Geometries in Memory", renderer.info.memory.geometries);
+
   return <></>;
 }
